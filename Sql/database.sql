@@ -1,38 +1,51 @@
 CREATE DATABASE Solaire;
+GO
+
 USE Solaire;
-CREATE TABLE batterie(
-    idBatterie INT PRIMARY KEY AUTO_INCREMENT,
+GO
+
+CREATE TABLE batterie (
+    idBatterie INT IDENTITY(1,1) PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    rendement DOUBLE NOT NULL,
-    capacite DOUBLE,
+    rendement FLOAT NOT NULL,
+    capacite FLOAT,
     chargeDebut TIME,
     chargeFin TIME
 );
-CREATE TABLE panneau(
-    idPanneau INT PRIMARY KEY AUTO_INCREMENT,
+GO
+
+CREATE TABLE panneau (
+    idPanneau INT IDENTITY(1,1) PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    rendement DOUBLE NOT NULL,
-    puissanceA DOUBLE,
-    puissanceB DOUBLE,
-    energie DOUBLE,
-    prixUnitaire DOUBLE
+    rendement FLOAT NOT NULL,
+    puissanceA FLOAT,
+    puissanceB FLOAT,
+    energie FLOAT,
+    prixUnitaire FLOAT
 );
-CREATE TABLE energieSolaire(
-    idEnergie INT PRIMARY KEY AUTO_INCREMENT,
+GO
+
+CREATE TABLE energieSolaire (
+    idEnergie INT IDENTITY(1,1) PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    pourcentage DOUBLE NOT NULL,
+    pourcentage FLOAT NOT NULL,
     heureDebut TIME,
     heureFin TIME,
     ref1 VARCHAR(100)
 );
-CREATE TABLE appareil(
-    idAppareil INT PRIMARY KEY AUTO_INCREMENT,
+GO
+
+CREATE TABLE appareil (
+    idAppareil INT IDENTITY(1,1) PRIMARY KEY,
     nom VARCHAR(100) NOT NULL
 );
-CREATE TABLE consommation(
-    idConsommation INT PRIMARY KEY AUTO_INCREMENT,
+GO
+
+CREATE TABLE consommation (
+    idConsommation INT IDENTITY(1,1) PRIMARY KEY,
     idAppareil INT,
     heureDebut TIME,
     heureFin TIME,
-    consommation DOUBLE
+    consommation FLOAT
 );
+GO
