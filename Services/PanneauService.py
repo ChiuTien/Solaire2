@@ -102,3 +102,17 @@ class PanneauService:
 			)
 
 		return resultat
+
+	@staticmethod
+	def retourner_pic(consommations):
+		"""
+		Retourne la consommation de pic (valeur maximale) apres fusion.
+
+		Retour:
+			Objet Consommation avec la puissance maximale, ou None si vide.
+		"""
+		consommations_fusionnees = PanneauService.calculer_consommation_fusionnee(consommations)
+		if not consommations_fusionnees:
+			return None
+
+		return max(consommations_fusionnees, key=lambda c: c.get_consommation())
