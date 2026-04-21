@@ -5,18 +5,29 @@ class SQLServerDB:
         self.conn = None
 
     def connect(self):
-        self.conn = pyodbc.connect(
-            "DRIVER={ODBC Driver 17 for SQL Server};"
-            "SERVER=localhost,1433;"  
-            "DATABASE=EnergieDB;"
-            "UID=sa;"
-            "PWD=123pubgA!"
-        )
-        return self.conn
+        try:
+            self.conn = pyodbc.connect(   #  CORRECTION ICI
+                "DRIVER={ODBC Driver 18 for SQL Server};"
+                "SERVER=localhost,1433;"
+                "DATABASE=Solaire;"
+                "UID=sa;"
+                "PWD=MotDePasseFort123!;"
+                "Encrypt=yes;"
+                "TrustServerCertificate=yes;"
+            )
+            print("Connexion OK")
+            return self.conn
+
+        except Exception as e:
+            print(" Erreur connexion :", e)
+            self.conn = None
+            return None
 
     def cursor(self):
-        if not self.conn:
+        if self.conn is None:
             self.connect()
+        if self.conn is None:
+            raise Exception(" Connexion échouée")
         return self.conn.cursor()
 
     def execute(self, query, params=None):
@@ -38,3 +49,19 @@ class SQLServerDB:
     def close(self):
         if self.conn:
             self.conn.close()
+            self.conn = None
+
+
+# ---------------- TEST ----------------
+try:
+    db = SQLServerDB()
+
+    result = db.fetch_all("SELECT * FROM appareil")
+
+    for row in result:
+        print(row)
+
+    db.close()
+
+except Exception as e:
+    print("Erreur :", e)
