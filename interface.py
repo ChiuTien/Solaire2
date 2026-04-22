@@ -26,6 +26,26 @@ def apply_theme(root):
 	root.configure(bg=colors["bg"])
 
 	style.configure("TFrame", background=colors["bg"])
+	style.configure("Page.TFrame", background=colors["bg"])
+	style.configure(
+		"Hero.TFrame",
+		background=colors["primary"],
+		relief="solid",
+		borderwidth=1,
+		bordercolor=colors["primary"],
+	)
+	style.configure("HeroTitle.TLabel", background=colors["primary"], foreground="#ffffff", font="{Segoe UI} 18 bold")
+	style.configure("HeroSub.TLabel", background=colors["primary"], foreground="#d1fae5", font="{Segoe UI} 10")
+	style.configure(
+		"Card.TFrame",
+		background=colors["surface"],
+		relief="solid",
+		borderwidth=1,
+		bordercolor=colors["border"],
+		lightcolor=colors["border"],
+		darkcolor=colors["border"],
+	)
+	style.configure("Section.TLabel", background=colors["surface"], foreground=colors["muted_text"], font="{Segoe UI} 10 bold")
 	style.configure(
 		"TLabelframe",
 		background=colors["surface"],
@@ -75,6 +95,12 @@ def apply_theme(root):
 		background=[("active", colors["primary_hover"]), ("pressed", colors["primary_hover"])],
 		foreground=[("disabled", "#e2e8f0")],
 	)
+	style.configure("Menu.TButton", font="{Segoe UI} 10 bold", padding=(16, 14))
+	style.map(
+		"Menu.TButton",
+		background=[("active", colors["primary_hover"]), ("pressed", colors["primary_hover"])],
+		foreground=[("disabled", "#e2e8f0")],
+	)
 
 	style.configure(
 		"Treeview",
@@ -106,23 +132,48 @@ class MenuPrincipal:
 	def __init__(self, master):
 		self.master = master
 		self.master.title("Gestion Solaire - Menu")
-		self.master.geometry("520x360")
-		self.master.minsize(500, 340)
+		self.master.geometry("760x460")
+		self.master.minsize(700, 420)
 		self.master.configure(bg="#f5f7fb")
+		self.master.columnconfigure(0, weight=1)
+		self.master.rowconfigure(0, weight=1)
 
-		header = ttk.Frame(master)
-		header.pack(fill="x", padx=16, pady=(14, 6))
-		ttk.Label(header, text="Gestion Solaire", font="{Segoe UI} 16 bold").pack(anchor="w")
-		ttk.Label(header, text="Selectionnez un module pour commencer", font="{Segoe UI} 10").pack(anchor="w", pady=(2, 0))
+		page = ttk.Frame(master, style="Page.TFrame", padding=22)
+		page.grid(row=0, column=0, sticky="nsew")
+		page.columnconfigure(0, weight=1)
 
-		frame = ttk.LabelFrame(master, text="Choisir une interface")
-		frame.pack(fill="both", expand=True, padx=16, pady=(8, 16))
+		header = ttk.Frame(page, style="Hero.TFrame", padding=(20, 16))
+		header.grid(row=0, column=0, sticky="ew")
+		ttk.Label(header, text="Gestion Solaire", style="HeroTitle.TLabel").pack(anchor="w")
+		ttk.Label(header, text="Selectionnez un module pour demarrer", style="HeroSub.TLabel").pack(anchor="w", pady=(3, 0))
 
-		ttk.Button(frame, text="CRUD Appareil", command=self.open_appareil).pack(fill="x", padx=10, pady=7)
-		ttk.Button(frame, text="CRUD Batterie", command=self.open_batterie).pack(fill="x", padx=10, pady=7)
-		ttk.Button(frame, text="CRUD Panneau", command=self.open_panneau).pack(fill="x", padx=10, pady=7)
-		ttk.Button(frame, text="CRUD Consommation", command=self.open_consommation).pack(fill="x", padx=10, pady=7)
-		ttk.Button(frame, text="Analyse Consommation", command=self.open_analyse).pack(fill="x", padx=10, pady=7)
+		card = ttk.Frame(page, style="Card.TFrame", padding=16)
+		card.grid(row=1, column=0, sticky="ew", pady=(14, 0))
+		card.columnconfigure(0, weight=1)
+		card.columnconfigure(1, weight=1)
+
+		ttk.Label(card, text="Choisir une interface", style="Section.TLabel").grid(row=0, column=0, columnspan=2, sticky="w", padx=4, pady=(2, 10))
+
+		actions = [
+			("CRUD Appareil", self.open_appareil),
+			("CRUD Batterie", self.open_batterie),
+			("CRUD Panneau", self.open_panneau),
+			("CRUD Consommation", self.open_consommation),
+			("Analyse Consommation", self.open_analyse),
+		]
+
+		for idx, (label, action) in enumerate(actions):
+			if idx < 4:
+				row = 1 + (idx // 2)
+				col = idx % 2
+				columnspan = 1
+			else:
+				row = 3
+				col = 0
+				columnspan = 2
+
+			btn = ttk.Button(card, text=label, command=action, style="Menu.TButton")
+			btn.grid(row=row, column=col, columnspan=columnspan, sticky="ew", padx=6, pady=6)
 
 	def _open_window(self, title):
 		window = tk.Toplevel(self.master)
