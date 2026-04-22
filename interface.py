@@ -6,6 +6,7 @@ from Views.BatterieViews import BatterieView
 from Views.ConsommationAnalyseView import ConsommationAnalyseView
 from Views.ConsommationAppareil import ConsommationAppareilView
 from Views.PanneauxViews import PanneauView
+from Views.PrixViews import PrixView
 from theme import apply_dark_theme
 
 
@@ -37,6 +38,7 @@ class MenuPrincipal:
 		ttk.Button(section1, text="📱 Appareils", command=self.open_appareil).pack(fill="x", padx=10, pady=8)
 		ttk.Button(section1, text="🔋 Batteries", command=self.open_batterie).pack(fill="x", padx=10, pady=8)
 		ttk.Button(section1, text="☀️ Panneaux Solaires", command=self.open_panneau).pack(fill="x", padx=10, pady=8)
+		ttk.Button(section1, text="💵 Prix", command=self.open_prix).pack(fill="x", padx=10, pady=8)
 
 		# Section: Consommation
 		section2 = ttk.LabelFrame(master, text="📊 CONSOMMATION")
@@ -66,6 +68,9 @@ class MenuPrincipal:
 
 	def open_panneau(self):
 		PanneauView(self._open_window("CRUD Panneau"))
+
+	def open_prix(self):
+		PrixView(self._open_window("CRUD Prix"))
 
 	def open_consommation(self):
 		ConsommationAppareilView(self._open_window("CRUD Consommation"))

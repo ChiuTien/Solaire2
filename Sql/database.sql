@@ -51,3 +51,10 @@ CREATE TABLE consommation (
     consommation FLOAT
 );
 GO
+
+CREATE TABLE prix (
+    idPrix INT IDENTITY(1,1) PRIMARY KEY,
+    prixOuvrable FLOAT,
+    prixWeekend FLOAT,
+    puissance FLOAT
+);
