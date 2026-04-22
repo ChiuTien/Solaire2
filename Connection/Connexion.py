@@ -8,10 +8,10 @@ class SQLServerDB:
         try:
             self.conn = pyodbc.connect(   #  CORRECTION ICI
                 "DRIVER={ODBC Driver 18 for SQL Server};"
-                "SERVER=localhost,1433;"
+                "SERVER=localhost\\SQLEXPRESS;"
                 "DATABASE=Solaire;"
-                "UID=sa;"
-                "PWD=MotDePasseFort123!;"
+                "UID=andie2;"
+                "PWD=andie1234;"
                 "Encrypt=yes;"
                 "TrustServerCertificate=yes;"
             )
