@@ -6,12 +6,14 @@ class Consommation:
 		heureDebut=None,
 		heureFin=None,
 		consommation=None,
+		PrixWeekend=None,
 	):
 		self._idConsommation = idConsommation
 		self._idAppareil = idAppareil
 		self._heureDebut = heureDebut
 		self._heureFin = heureFin
 		self._consommation = consommation
+		self._PrixWeekend = PrixWeekend
 
 	def get_idConsommation(self):
 		return self._idConsommation
@@ -42,3 +44,9 @@ class Consommation:
 
 	def set_consommation(self, consommation):
 		self._consommation = consommation
+
+	def get_PrixWeekend(self):
+		return self._PrixWeekend
+
+	def set_PrixWeekend(self, PrixWeekend):
+		self._PrixWeekend = PrixWeekend
