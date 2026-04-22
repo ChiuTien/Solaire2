@@ -50,6 +50,20 @@ class ConsommationRepository:
             print(f"Erreur lors de la lecture: {e}")
             return []
 
+    def get_by_appareil_id(self, id_appareil):
+        """Get consommations by appareil ID"""
+        try:
+            query = "SELECT * FROM consommation WHERE idAppareil = ?"
+            result = self.db.fetch_all(query, (id_appareil,))
+            consommations = []
+            for row in result:
+                consommation = Consommation(row[0], row[1], row[2], row[3], row[4])
+                consommations.append(consommation)
+            return consommations
+        except Exception as e:
+            print(f"Erreur lors de la lecture: {e}")
+            return []
+
     def update(self, consommation):
         """Update a consommation"""
         try:
