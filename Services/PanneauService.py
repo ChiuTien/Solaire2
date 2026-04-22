@@ -116,3 +116,61 @@ class PanneauService:
 			return None
 
 		return max(consommations_fusionnees, key=lambda c: c.get_consommation())
+
+	@staticmethod
+	def _duree_heures(heure_debut, heure_fin):
+		"""Retourne la duree en heures, avec gestion du passage a minuit."""
+		debut = PanneauService._to_minutes(heure_debut)
+		fin = PanneauService._to_minutes(heure_fin)
+		if fin <= debut:
+			fin += 24 * 60
+		return (fin - debut) / 60.0
+
+	@staticmethod
+	def calcul_puissance_scolaire(consommation_journaliere, energie_solaires):
+		"""
+		Calcule la puissance solaire disponible selon les tranches EnergieSolaire.
+
+		Formule:
+			pic(consommation_journaliere) * somme(duree_tranche * pourcentage_tranche)
+		"""
+		if not consommation_journaliere or not energie_solaires:
+			return 0
+
+		duree_ponderee = 0.0
+		for energie in energie_solaires:
+			duree = PanneauService._duree_heures(
+				energie.get_heureDebut(),
+				energie.get_heureFin(),
+			)
+			pourcentage = float(energie.get_pourcentage() or 0)
+			duree_ponderee += duree * pourcentage
+
+		pic = PanneauService.retourner_pic(consommation_journaliere)
+		if pic is None:
+			return 0
+
+		return pic.get_consommation() * duree_ponderee
+
+	@staticmethod
+	def calcul_puissance_solaire(consommation_journaliere, energie_solaires):
+		"""Alias de compatibilite pour le nom correct 'solaire'."""
+		return PanneauService.calcul_puissance_scolaire(consommation_journaliere, energie_solaires)
+
+	@staticmethod
+	def calcul_puissance_restante(consommation_journaliere, energie_solaires):
+		"""
+		Calcule la puissance restante:
+			puissance_solaire_disponible - consommation_totale_journee
+		"""
+		somme_consommation = 0.0
+		for conso in consommation_journaliere or []:
+			duree = PanneauService._duree_heures(conso.get_heureDebut(), conso.get_heureFin())
+			somme_consommation += float(conso.get_consommation()) * duree
+
+		puissance_solaire = PanneauService.calcul_puissance_scolaire(
+			consommation_journaliere,
+			energie_solaires,
+		)
+
+		return puissance_solaire - somme_consommation

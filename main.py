@@ -1,4 +1,5 @@
 from Models.Consommation import Consommation
+from Models.EnergieSolaire import EnergieSolaire
 from Services.PanneauService import PanneauService
 from Services.ConsommationService import ConsommationService
 
@@ -39,7 +40,12 @@ consommation_soiree = ConsommationService.retourner_consommation_soiree(consomma
 
 
 
-#consommation_journee = PanneauService.calculer_consommation_fusionnee(consommation_journee)
+print("Consommation journee:")
+for c in consommation_journee:
+    print(as_tuple(c))
+    
+consommation_journee = PanneauService.calculer_consommation_fusionnee(consommation_journee)
+    
 print("Consommation journee:")
 for c in consommation_journee:
     print(as_tuple(c))
@@ -49,6 +55,18 @@ for c in consommation_soiree:
 pic = PanneauService.retourner_pic(consommation_journee)
 if pic:
     print(pic.get_heureDebut(), pic.get_heureFin(), pic.get_consommation())
+
+energie_solaires = [
+    EnergieSolaire(None, "AM", 1, "6", "17", None),
+    EnergieSolaire(None, "FA", 0.5, "17", "19", None),
+    EnergieSolaire(None, "PM", 0, "19", "6", None),
+]
+
+puissance_scolaire = PanneauService.calcul_puissance_scolaire(consommation_journee, energie_solaires)
+puissance_restante = PanneauService.calcul_puissance_restante(consommation_journee, energie_solaires)
+
+print("Puissance scolaire:", puissance_scolaire)
+print("Puissance restante:", puissance_restante)
 
 
 print("Tests ConsommationService OK")
