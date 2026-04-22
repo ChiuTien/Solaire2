@@ -51,3 +51,11 @@ CREATE TABLE consommation (
     consommation FLOAT
 );
 GO
+
+
+CREATE TABLE prix(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    prixUnitaire FLOAT NULL,
+    prixWeekend FLOAT NULL,
+    EnergieSolaire FLOAT
+);
