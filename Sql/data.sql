@@ -1,10 +1,11 @@
+-- Active: 1776292121099@@127.0.0.1@1433
 USE Solaire;
 GO
 
 IF COL_LENGTH('panneau', 'prixWeekend') IS NULL
 BEGIN
-	ALTER TABLE panneau ADD prixWeekend FLOAT NULL;
-END
+	ALTER TABLE panneau ADD prixWeekend FLOAT NULL
+END;
 GO
 
 -- Appareil de reference (idAppareil = 1)
