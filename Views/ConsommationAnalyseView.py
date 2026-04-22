@@ -5,6 +5,7 @@ from Repositories.AppareilRepository import AppareilRepository
 from Repositories.ConsommationRepository import ConsommationRepository
 from Repositories.EnergieSolaireRepository import EnergieSolaireRepository
 from Repositories.PanneauRepository import PanneauRepository
+from Repositories.PrixRepository import PrixRepository
 from Services.ConsommationService import ConsommationService
 from Services.PanneauService import PanneauService
 from Services.PrixPuissanceJournaliereRestante import prix_achat
@@ -22,13 +23,16 @@ class ConsommationAnalyseView:
         self.consommation_repo = ConsommationRepository()
         self.energie_repo = EnergieSolaireRepository()
         self.panneau_repo = PanneauRepository()
+        self.prix_repo = PrixRepository()
 
         self.appareils_map = {}
         self.panneaux_map = {}
+        self.prix_configs_map = {}
 
         self._build_ui()
         self._load_appareils()
         self._load_panneaux()
+        self._load_prix_configs()
 
     def _build_ui(self):
         top = ttk.LabelFrame(self.master, text="Parametres")
@@ -43,13 +47,9 @@ class ConsommationAnalyseView:
         self.panneau_combo.grid(row=1, column=1, padx=8, pady=8, sticky="w")
         self.panneau_combo.bind("<<ComboboxSelected>>", self.on_panneau_selected)
 
-        ttk.Label(top, text="Prix journaliere:").grid(row=0, column=3, padx=8, pady=8, sticky="w")
-        self.prix_journaliere_entry = ttk.Entry(top, width=18)
-        self.prix_journaliere_entry.grid(row=0, column=4, padx=8, pady=8, sticky="w")
-
-        ttk.Label(top, text="Prix weekend:").grid(row=1, column=3, padx=8, pady=8, sticky="w")
-        self.prix_weekend_entry = ttk.Entry(top, width=18)
-        self.prix_weekend_entry.grid(row=1, column=4, padx=8, pady=8, sticky="w")
+        ttk.Label(top, text="Configuration prix:").grid(row=0, column=3, padx=8, pady=8, sticky="w")
+        self.prix_config_combo = ttk.Combobox(top, state="readonly", width=35)
+        self.prix_config_combo.grid(row=0, column=4, padx=8, pady=8, sticky="w")
 
         ttk.Label(top, text="Energie elementaire:").grid(row=2, column=3, padx=8, pady=8, sticky="w")
         self.energie_unitaire_entry = ttk.Entry(top, width=18)
@@ -63,7 +63,7 @@ class ConsommationAnalyseView:
         self.pic_var = tk.StringVar(value="Pic: -")
         self.puissance_scolaire_var = tk.StringVar(value="Puissance scolaire: -")
         self.puissance_restante_var = tk.StringVar(value="Puissance restante: -")
-        self.prix_journalier_var = tk.StringVar(value="Prix achat (journalier): -")
+        self.prix_journalier_var = tk.StringVar(value="Prix achat (ouvrable): -")
         self.prix_weekend_var = tk.StringVar(value="Prix achat (weekend): -")
 
         ttk.Label(summary, textvariable=self.pic_var).grid(row=0, column=0, padx=12, pady=8, sticky="w")
@@ -135,16 +135,27 @@ class ConsommationAnalyseView:
             self.panneau_combo.current(0)
             self._fill_panneau_fields(values[0])
 
+    def _load_prix_configs(self):
+        prix_list = self.prix_repo.get_all()
+        values = []
+        self.prix_configs_map = {}
+
+        for prix in prix_list:
+            label = (
+                f"{prix.get_idPrix()} - Ouvrable: {prix.get_prixOuvrable()} | "
+                f"Weekend: {prix.get_prixWeekend()}"
+            )
+            values.append(label)
+            self.prix_configs_map[label] = prix
+
+        self.prix_config_combo["values"] = values
+        if values:
+            self.prix_config_combo.current(len(values) - 1)
+
     def _fill_panneau_fields(self, label):
         panneau = self.panneaux_map.get(label)
         if panneau is None:
             return
-
-        self.prix_journaliere_entry.delete(0, tk.END)
-        self.prix_journaliere_entry.insert(0, str(panneau.get_prixUnitaire() or ""))
-
-        self.prix_weekend_entry.delete(0, tk.END)
-        self.prix_weekend_entry.insert(0, str(panneau.get_prixWeekend() or ""))
 
         self.energie_unitaire_entry.delete(0, tk.END)
         self.energie_unitaire_entry.insert(0, str(panneau.get_energie() or ""))
@@ -192,7 +203,7 @@ class ConsommationAnalyseView:
             self.pic_var.set("Pic: -")
             self.puissance_scolaire_var.set("Puissance scolaire: -")
             self.puissance_restante_var.set("Puissance restante: -")
-            self.prix_journalier_var.set("Prix achat (journalier): -")
+            self.prix_journalier_var.set("Prix achat (ouvrable): -")
             self.prix_weekend_var.set("Prix achat (weekend): -")
             return
 
@@ -204,24 +215,28 @@ class ConsommationAnalyseView:
         puissance_scolaire = PanneauService.calcul_puissance_scolaire(consommation_journee_fusionnee, energie_solaires)
         puissance_restante = PanneauService.calcul_puissance_restante(consommation_journee_fusionnee, energie_solaires)
 
+        selected_prix_label = self.prix_config_combo.get().strip()
+        if not selected_prix_label or selected_prix_label not in self.prix_configs_map:
+            messagebox.showwarning("Analyse", "Veuillez selectionner une configuration de prix.")
+            return
+
+        selected_prix = self.prix_configs_map[selected_prix_label]
+
         try:
             energie_unitaire = float(self.energie_unitaire_entry.get().strip())
-            prix_journaliere = float(self.prix_journaliere_entry.get().strip())
-            prix_weekend_text = self.prix_weekend_entry.get().strip()
-            prix_weekend = float(prix_weekend_text) if prix_weekend_text else prix_journaliere
         except ValueError:
             messagebox.showerror(
                 "Analyse",
-                "Prix journaliere, prix weekend et energie elementaire doivent etre numeriques.",
+                "Energie elementaire doit etre numerique.",
             )
             return
 
-        # Utilisation de la nouvelle fonction prix_achat.
+        # Les prix (ouvrable/weekend) viennent de la configuration selectionnee.
         prix_journalier_achat, prix_weekend_achat = prix_achat(
             consommation_restante=puissance_restante,
             energie_unitaire=energie_unitaire,
-            prix_journaliere=prix_journaliere,
-            prix_weekend=prix_weekend,
+            prix_ouvrable=selected_prix.get_prixOuvrable(),
+            prix_weekend=selected_prix.get_prixWeekend(),
         )
 
         self._clear_trees()
@@ -240,7 +255,7 @@ class ConsommationAnalyseView:
 
         self.puissance_scolaire_var.set(f"Puissance scolaire: {puissance_scolaire}")
         self.puissance_restante_var.set(f"Puissance restante: {puissance_restante}")
-        self.prix_journalier_var.set(f"Prix achat (journalier): {prix_journalier_achat}")
+        self.prix_journalier_var.set(f"Prix achat (ouvrable): {prix_journalier_achat}")
         self.prix_weekend_var.set(f"Prix achat (weekend): {prix_weekend_achat}")
 
 

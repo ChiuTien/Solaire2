@@ -39,6 +39,12 @@ class PrixService:
 	def get_all_prix(self):
 		return self.repo.get_all()
 
+	def get_latest_prix(self):
+		prix_list = self.repo.get_all()
+		if not prix_list:
+			return None
+		return max(prix_list, key=lambda p: p.get_idPrix())
+
 	def update_prix(self, id_prix, prix_ouvrable, prix_weekend, puissance):
 		prix_ouvrable, prix_weekend, puissance = self._validate_values(
 			prix_ouvrable,

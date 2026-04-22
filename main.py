@@ -73,7 +73,7 @@ print("Puissance restante:", puissance_restante)
 prix_journalier_achat, prix_weekend_achat = prix_achat(
     consommation_restante=puissance_restante,
     energie_unitaire=1,
-    prix_journaliere=400,
+    prix_ouvrable=400,
     prix_weekend=200,
 )
 
