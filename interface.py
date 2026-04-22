@@ -5,6 +5,7 @@ from Views.AppareilViews import AppareilView
 from Views.BatterieViews import BatterieView
 from Views.ConsommationAnalyseView import ConsommationAnalyseView
 from Views.ConsommationAppareil import ConsommationAppareilView
+from Views.HeurePointeViews import HeurePointeView
 from Views.PanneauxViews import PanneauView
 from Views.PrixViews import PrixView
 
@@ -13,7 +14,7 @@ class MenuPrincipal:
 	def __init__(self, master):
 		self.master = master
 		self.master.title("Gestion Solaire - Menu")
-		self.master.geometry("460x330")
+		self.master.geometry("460x380")
 
 		frame = ttk.LabelFrame(master, text="Choisir une interface")
 		frame.pack(fill="both", expand=True, padx=14, pady=14)
@@ -22,6 +23,7 @@ class MenuPrincipal:
 		ttk.Button(frame, text="CRUD Batterie", command=self.open_batterie).pack(fill="x", padx=12, pady=8)
 		ttk.Button(frame, text="CRUD Panneau", command=self.open_panneau).pack(fill="x", padx=12, pady=8)
 		ttk.Button(frame, text="CRUD Prix", command=self.open_prix).pack(fill="x", padx=12, pady=8)
+		ttk.Button(frame, text="CRUD Heure Pointe", command=self.open_heure_pointe).pack(fill="x", padx=12, pady=8)
 		ttk.Button(frame, text="CRUD Consommation", command=self.open_consommation).pack(fill="x", padx=12, pady=8)
 		ttk.Button(frame, text="Analyse Consommation", command=self.open_analyse).pack(fill="x", padx=12, pady=8)
 
@@ -41,6 +43,9 @@ class MenuPrincipal:
 
 	def open_prix(self):
 		PrixView(self._open_window("CRUD Prix"))
+
+	def open_heure_pointe(self):
+		HeurePointeView(self._open_window("CRUD Heure Pointe"))
 
 	def open_consommation(self):
 		ConsommationAppareilView(self._open_window("CRUD Consommation"))

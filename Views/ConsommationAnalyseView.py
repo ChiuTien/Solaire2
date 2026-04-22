@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox
 from Repositories.AppareilRepository import AppareilRepository
 from Repositories.ConsommationRepository import ConsommationRepository
 from Repositories.EnergieSolaireRepository import EnergieSolaireRepository
+from Repositories.HeurePointeRepository import HeurePointeRepository
 from Repositories.PrixRepository import PrixRepository
 from Services.ConsommationService import ConsommationService
 from Services.PanneauService import PanneauService
@@ -21,6 +22,7 @@ class ConsommationAnalyseView:
         self.appareil_repo = AppareilRepository()
         self.consommation_repo = ConsommationRepository()
         self.energie_repo = EnergieSolaireRepository()
+        self.heure_pointe_repo = HeurePointeRepository()
         self.prix_repo = PrixRepository()
 
         self.appareils_map = {}
@@ -185,6 +187,7 @@ class ConsommationAnalyseView:
             message_aucune_conso = "Aucune consommation trouvee pour cet appareil."
 
         energie_solaires = self.energie_repo.get_all()
+        heure_pointes = self.heure_pointe_repo.get_all()
 
         if not consommations:
             messagebox.showinfo("Analyse", message_aucune_conso)
@@ -222,6 +225,8 @@ class ConsommationAnalyseView:
             energie_unitaire=energie_unitaire,
             prix_journaliere=prix_journaliere,
             prix_weekend=prix_weekend,
+            consommations_journee=consommation_journee_fusionnee,
+            heure_pointes=heure_pointes,
         )
 
         self._clear_trees()

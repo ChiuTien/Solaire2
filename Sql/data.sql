@@ -45,4 +45,24 @@ INSERT INTO panneau (nom, rendement, puissanceA, puissanceB, energie, prixUnitai
 ('Panneau 450W', 0.92, 450, 0, 4.5, 850000, NULL);
 GO
 
+INSERT INTO Heure_pointe (heureDebut, heureFin, pourcentage) VALUES
+('12:00:00', '14:00:00', 0.5),
+('17:00:00', '19:00:00', 0.5);
 
+
+
+
+
+-- Majorer heure de Heure pointe ::
+-- entre 12 -14 pourcentage + 50%  prix () pendant cette durée
+-- entre 17 -19 pourcentage + -50%  prix pendant cette durée
+
+
+-- prixjournallier /prixUnitaire
+
+
+
+-- heure de pointe pendant calcul 
+
+-- prix_total +
+-- 	cas 1 : heure_pointe.pourcentage*(consommation entre (heurepointe fin et debut)* prix /Enerigie solaire) a chaque heure de pointe

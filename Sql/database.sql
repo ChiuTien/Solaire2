@@ -59,3 +59,16 @@ CREATE TABLE prix(
     prixWeekend FLOAT NULL,
     EnergieSolaire FLOAT
 );
+
+GO
+
+
+CREATE TABLE Heure_pointe(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    heureDebut TIME,
+    heureFin TIME,
+    pourcentage FLOAT
+);
+
+GO
+
