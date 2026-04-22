@@ -22,7 +22,8 @@ CREATE TABLE panneau (
     puissanceA FLOAT,
     puissanceB FLOAT,
     energie FLOAT,
-    prixUnitaire FLOAT
+    prixUnitaire FLOAT,
+    prixWeekend FLOAT NULL
 );
 GO
 

@@ -2,16 +2,17 @@ from Models.Consommation import Consommation
 from Models.EnergieSolaire import EnergieSolaire
 from Services.PanneauService import PanneauService
 from Services.ConsommationService import ConsommationService
+from Services.PrixPuissanceJournaliereRestante import prix_achat
 
 consommations = [
-    Consommation(None, 1, "8h", "12h", 55),
-    Consommation(None, 1, "10", "14", 75),
-    Consommation(None, 1, "6", "17", 120),
-    Consommation(None, 1, "17", "19", 10),
-    Consommation(None, 1, "17", "19", 55),
-    Consommation(None, 1, "19", "6", 10),
-    Consommation(None, 1, "19", "6", 120),
-    Consommation(None, 1, "19", "23", 10)
+    Consommation(None, 1, "8h", "12h", 55),#TV
+    Consommation(None, 1, "10", "14", 75),#Ventillateur
+    Consommation(None, 1, "6", "17", 120),#Refrigerateur
+    Consommation(None, 1, "17", "19", 10),#lampe
+    Consommation(None, 1, "17", "19", 55),#tv
+    Consommation(None, 1, "19", "6", 10),#routeur wifi
+    Consommation(None, 1, "19", "6", 120),#refrigerateur
+    Consommation(None, 1, "19", "23", 10)#lampe
 #  Consommation(None, 1, "6", "12", 100),
 ]
 
@@ -67,6 +68,17 @@ puissance_restante = PanneauService.calcul_puissance_restante(consommation_journ
 
 print("Puissance scolaire:", puissance_scolaire)
 print("Puissance restante:", puissance_restante)
+
+# Utilisation de la nouvelle fonction prix_achat.
+prix_journalier_achat, prix_weekend_achat = prix_achat(
+    consommation_restante=puissance_restante,
+    energie_unitaire=1,
+    prix_journaliere=400,
+    prix_weekend=200,
+)
+
+print("Prix achat (journalier):", prix_journalier_achat)
+print("Prix achat (weekend):", prix_weekend_achat)
 
 
 print("Tests ConsommationService OK")
