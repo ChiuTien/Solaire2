@@ -1,6 +1,17 @@
 USE Solaire;
 GO
 
+IF OBJECT_ID('dbo.PRIX', 'U') IS NULL
+BEGIN
+	CREATE TABLE dbo.PRIX(
+		idPrix INT IDENTITY(1,1) PRIMARY KEY,
+		prixOuvrable FLOAT,
+		prixWeekend FLOAT,
+		puissance FLOAT
+	);
+END
+GO
+
 IF COL_LENGTH('panneau', 'prixWeekend') IS NULL
 BEGIN
 	ALTER TABLE panneau ADD prixWeekend FLOAT NULL;

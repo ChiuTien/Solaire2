@@ -6,6 +6,7 @@ from Views.BatterieViews import BatterieView
 from Views.ConsommationAnalyseView import ConsommationAnalyseView
 from Views.ConsommationAppareil import ConsommationAppareilView
 from Views.PanneauxViews import PanneauView
+from Views.PrixViews import PrixView
 
 
 def apply_theme(root):
@@ -159,18 +160,14 @@ class MenuPrincipal:
 			("CRUD Batterie", self.open_batterie),
 			("CRUD Panneau", self.open_panneau),
 			("CRUD Consommation", self.open_consommation),
+			("CRUD Prix", self.open_prix),
 			("Analyse Consommation", self.open_analyse),
 		]
 
 		for idx, (label, action) in enumerate(actions):
-			if idx < 4:
-				row = 1 + (idx // 2)
-				col = idx % 2
-				columnspan = 1
-			else:
-				row = 3
-				col = 0
-				columnspan = 2
+			row = 1 + (idx // 2)
+			col = idx % 2
+			columnspan = 1
 
 			btn = ttk.Button(card, text=label, command=action, style="Menu.TButton")
 			btn.grid(row=row, column=col, columnspan=columnspan, sticky="ew", padx=6, pady=6)
@@ -191,6 +188,9 @@ class MenuPrincipal:
 
 	def open_consommation(self):
 		ConsommationAppareilView(self._open_window("CRUD Consommation"))
+
+	def open_prix(self):
+		PrixView(self._open_window("CRUD Prix"))
 
 	def open_analyse(self):
 		ConsommationAnalyseView(self._open_window("Analyse Consommation"))

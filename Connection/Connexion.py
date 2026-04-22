@@ -53,15 +53,16 @@ class SQLServerDB:
 
 
 # ---------------- TEST ----------------
-try:
-    db = SQLServerDB()
+if __name__ == "__main__":
+    try:
+        db = SQLServerDB()
 
-    result = db.fetch_all("SELECT * FROM appareil")
+        result = db.fetch_all("SELECT * FROM appareil")
 
-    for row in result:
-        print(row)
+        for row in result:
+            print(row)
 
-    db.close()
+        db.close()
 
-except Exception as e:
-    print("Erreur :", e)
+    except Exception as e:
+        print("Erreur :", e)
