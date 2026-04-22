@@ -4,14 +4,14 @@ from Services.PanneauService import PanneauService
 from Services.ConsommationService import ConsommationService
 
 consommations = [
-    Consommation(None, 1, "8h", "12h", 55),
-    Consommation(None, 1, "10", "14", 75),
-    Consommation(None, 1, "6", "17", 120),
-    Consommation(None, 1, "17", "19", 10),
-    Consommation(None, 1, "17", "19", 55),
-    Consommation(None, 1, "19", "6", 10),
-    Consommation(None, 1, "19", "6", 120),
-    Consommation(None, 1, "19", "23", 10)
+    Consommation(None, 1, "8h", "12h", 55),#TV
+    Consommation(None, 1, "10", "14", 75),#Ventillateur
+    Consommation(None, 1, "6", "17", 120),#Refrigerateur
+    Consommation(None, 1, "17", "19", 10),#lampe
+    Consommation(None, 1, "17", "19", 55),#tv
+    Consommation(None, 1, "19", "6", 10),#routeur wifi
+    Consommation(None, 1, "19", "6", 120),#refrigerateur
+    Consommation(None, 1, "19", "23", 10)#lampe
 #  Consommation(None, 1, "6", "12", 100),
 ]
 
