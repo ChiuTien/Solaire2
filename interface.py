@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from Views.AppareilViews import AppareilView
+from Views.AugmentationViews import AugmentationView
 from Views.BatterieViews import BatterieView
 from Views.ConsommationAnalyseView import ConsommationAnalyseView
 from Views.ConsommationAppareil import ConsommationAppareilView
@@ -39,6 +40,7 @@ class MenuPrincipal:
 		ttk.Button(section1, text="🔋 Batteries", command=self.open_batterie).pack(fill="x", padx=10, pady=8)
 		ttk.Button(section1, text="☀️ Panneaux Solaires", command=self.open_panneau).pack(fill="x", padx=10, pady=8)
 		ttk.Button(section1, text="💵 Prix", command=self.open_prix).pack(fill="x", padx=10, pady=8)
+		ttk.Button(section1, text="📊 Augmentation", command=self.open_augmentation).pack(fill="x", padx=10, pady=8)
 
 		# Section: Consommation
 		section2 = ttk.LabelFrame(master, text="📊 CONSOMMATION")
@@ -71,6 +73,9 @@ class MenuPrincipal:
 
 	def open_prix(self):
 		PrixView(self._open_window("CRUD Prix"))
+
+	def open_augmentation(self):
+		AugmentationView(self._open_window("CRUD Augmentation"))
 
 	def open_consommation(self):
 		ConsommationAppareilView(self._open_window("CRUD Consommation"))

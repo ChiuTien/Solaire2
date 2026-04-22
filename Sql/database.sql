@@ -58,3 +58,11 @@ CREATE TABLE prix (
     prixWeekend FLOAT,
     puissance FLOAT
 );
+
+CREATE TABLE augmentation (
+    idAugmentation INT IDENTITY(1,1) PRIMARY KEY,
+    pourcentageOuvrable FLOAT,
+    pourcentageWeekend FLOAT,
+    heureDebut TIME,
+    heureFin TIME
+);

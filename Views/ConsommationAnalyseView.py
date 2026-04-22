@@ -2,13 +2,14 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 from Repositories.AppareilRepository import AppareilRepository
+from Repositories.AugmentationRepository import AugmentationRepository
 from Repositories.ConsommationRepository import ConsommationRepository
 from Repositories.EnergieSolaireRepository import EnergieSolaireRepository
 from Repositories.PanneauRepository import PanneauRepository
 from Repositories.PrixRepository import PrixRepository
 from Services.ConsommationService import ConsommationService
 from Services.PanneauService import PanneauService
-from Services.PrixPuissanceJournaliereRestante import prix_achat
+from Services.PrixPuissanceJournaliereRestante import calcul_augmentation, prix_achat
 
 
 class ConsommationAnalyseView:
@@ -24,6 +25,7 @@ class ConsommationAnalyseView:
         self.energie_repo = EnergieSolaireRepository()
         self.panneau_repo = PanneauRepository()
         self.prix_repo = PrixRepository()
+        self.augmentation_repo = AugmentationRepository()
 
         self.appareils_map = {}
         self.panneaux_map = {}
@@ -65,12 +67,22 @@ class ConsommationAnalyseView:
         self.puissance_restante_var = tk.StringVar(value="Puissance restante: -")
         self.prix_journalier_var = tk.StringVar(value="Prix achat (ouvrable): -")
         self.prix_weekend_var = tk.StringVar(value="Prix achat (weekend): -")
+        self.augmentation_ouvrable_var = tk.StringVar(value="Supplement augmentation (ouvrable): -")
+        self.augmentation_weekend_var = tk.StringVar(value="Supplement augmentation (weekend): -")
+        self.prix_total_ouvrable_var = tk.StringVar(value="Total ouvrable: -")
+        self.prix_total_weekend_var = tk.StringVar(value="Total weekend: -")
+        self.augmentations_appliquees_var = tk.StringVar(value="Augmentations appliquees: -")
 
         ttk.Label(summary, textvariable=self.pic_var).grid(row=0, column=0, padx=12, pady=8, sticky="w")
         ttk.Label(summary, textvariable=self.puissance_scolaire_var).grid(row=0, column=1, padx=12, pady=8, sticky="w")
         ttk.Label(summary, textvariable=self.puissance_restante_var).grid(row=0, column=2, padx=12, pady=8, sticky="w")
         ttk.Label(summary, textvariable=self.prix_journalier_var).grid(row=1, column=0, padx=12, pady=8, sticky="w")
         ttk.Label(summary, textvariable=self.prix_weekend_var).grid(row=1, column=1, padx=12, pady=8, sticky="w")
+        ttk.Label(summary, textvariable=self.augmentation_ouvrable_var).grid(row=2, column=0, padx=12, pady=8, sticky="w")
+        ttk.Label(summary, textvariable=self.augmentation_weekend_var).grid(row=2, column=1, padx=12, pady=8, sticky="w")
+        ttk.Label(summary, textvariable=self.prix_total_ouvrable_var).grid(row=3, column=0, padx=12, pady=8, sticky="w")
+        ttk.Label(summary, textvariable=self.prix_total_weekend_var).grid(row=3, column=1, padx=12, pady=8, sticky="w")
+        ttk.Label(summary, textvariable=self.augmentations_appliquees_var).grid(row=4, column=0, columnspan=3, padx=12, pady=8, sticky="w")
 
         tables = ttk.Frame(self.master)
         tables.pack(fill="both", expand=True, padx=12, pady=8)
@@ -205,6 +217,11 @@ class ConsommationAnalyseView:
             self.puissance_restante_var.set("Puissance restante: -")
             self.prix_journalier_var.set("Prix achat (ouvrable): -")
             self.prix_weekend_var.set("Prix achat (weekend): -")
+            self.augmentation_ouvrable_var.set("Supplement augmentation (ouvrable): -")
+            self.augmentation_weekend_var.set("Supplement augmentation (weekend): -")
+            self.prix_total_ouvrable_var.set("Total ouvrable: -")
+            self.prix_total_weekend_var.set("Total weekend: -")
+            self.augmentations_appliquees_var.set("Augmentations appliquees: -")
             return
 
         consommation_journee = ConsommationService.retourner_consommation_journee(consommations)
@@ -239,6 +256,19 @@ class ConsommationAnalyseView:
             prix_weekend=selected_prix.get_prixWeekend(),
         )
 
+        augmentations = self.augmentation_repo.get_all()
+        consommation_complete = list(consommation_journee_fusionnee) + list(consommation_soiree)
+        sup_ouvrable, sup_weekend, details_augmentations = calcul_augmentation(
+            consommation_complete,
+            augmentations,
+            energie_unitaire,
+            selected_prix.get_prixOuvrable(),
+            selected_prix.get_prixWeekend(),
+        )
+
+        total_ouvrable = prix_journalier_achat + sup_ouvrable
+        total_weekend = prix_weekend_achat + sup_weekend
+
         self._clear_trees()
         for conso in consommation_journee_fusionnee:
             self.tree_journee.insert("", "end", values=self._as_values(conso))
@@ -255,8 +285,19 @@ class ConsommationAnalyseView:
 
         self.puissance_scolaire_var.set(f"Puissance scolaire: {puissance_scolaire}")
         self.puissance_restante_var.set(f"Puissance restante: {puissance_restante}")
-        self.prix_journalier_var.set(f"Prix achat (ouvrable): {prix_journalier_achat}")
-        self.prix_weekend_var.set(f"Prix achat (weekend): {prix_weekend_achat}")
+        self.prix_journalier_var.set(f"Prix achat (weekend): {prix_journalier_achat}")
+        self.prix_weekend_var.set(f"Prix achat (ouvrable): {prix_weekend_achat}")
+        self.augmentation_ouvrable_var.set(f"Supplement augmentation (weekend): {sup_ouvrable}")
+        self.augmentation_weekend_var.set(f"Supplement augmentation (ouvrable): {sup_weekend}")
+        self.prix_total_ouvrable_var.set(f"Total weekend: {total_ouvrable}")
+        self.prix_total_weekend_var.set(f"Total ouvrable: {total_weekend}")
+
+        if details_augmentations:
+            self.augmentations_appliquees_var.set(
+                "Augmentations appliquees: " + " | ".join(details_augmentations)
+            )
+        else:
+            self.augmentations_appliquees_var.set("Augmentations appliquees: aucune")
 
 
 if __name__ == "__main__":
