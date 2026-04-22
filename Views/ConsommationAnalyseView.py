@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox
 from Repositories.AppareilRepository import AppareilRepository
 from Repositories.ConsommationRepository import ConsommationRepository
 from Repositories.EnergieSolaireRepository import EnergieSolaireRepository
-from Repositories.PanneauRepository import PanneauRepository
+from Repositories.PrixRepository import PrixRepository
 from Services.ConsommationService import ConsommationService
 from Services.PanneauService import PanneauService
 from Services.PrixPuissanceJournaliereRestante import prix_achat
@@ -21,14 +21,14 @@ class ConsommationAnalyseView:
         self.appareil_repo = AppareilRepository()
         self.consommation_repo = ConsommationRepository()
         self.energie_repo = EnergieSolaireRepository()
-        self.panneau_repo = PanneauRepository()
+        self.prix_repo = PrixRepository()
 
         self.appareils_map = {}
-        self.panneaux_map = {}
+        self.prix_map = {}
 
         self._build_ui()
         self._load_appareils()
-        self._load_panneaux()
+        self._load_prix()
 
     def _build_ui(self):
         top = ttk.LabelFrame(self.master, text="Parametres")
@@ -38,10 +38,10 @@ class ConsommationAnalyseView:
         self.appareil_combo = ttk.Combobox(top, state="readonly", width=35)
         self.appareil_combo.grid(row=0, column=1, padx=8, pady=8, sticky="w")
 
-        ttk.Label(top, text="Panneau:").grid(row=1, column=0, padx=8, pady=8, sticky="w")
-        self.panneau_combo = ttk.Combobox(top, state="readonly", width=35)
-        self.panneau_combo.grid(row=1, column=1, padx=8, pady=8, sticky="w")
-        self.panneau_combo.bind("<<ComboboxSelected>>", self.on_panneau_selected)
+        ttk.Label(top, text="Tarif (table prix):").grid(row=1, column=0, padx=8, pady=8, sticky="w")
+        self.prix_combo = ttk.Combobox(top, state="readonly", width=35)
+        self.prix_combo.grid(row=1, column=1, padx=8, pady=8, sticky="w")
+        self.prix_combo.bind("<<ComboboxSelected>>", self.on_prix_selected)
 
         ttk.Label(top, text="Prix journaliere:").grid(row=0, column=3, padx=8, pady=8, sticky="w")
         self.prix_journaliere_entry = ttk.Entry(top, width=18)
@@ -120,37 +120,37 @@ class ConsommationAnalyseView:
         if values:
             self.appareil_combo.current(0)
 
-    def _load_panneaux(self):
-        panneaux = self.panneau_repo.get_all()
+    def _load_prix(self):
+        prix_list = self.prix_repo.get_all()
         values = []
-        self.panneaux_map = {}
+        self.prix_map = {}
 
-        for panneau in panneaux:
-            label = f"{panneau.get_idPanneau()} - {panneau.get_nom()}"
+        for prix in prix_list:
+            label = f"{prix.get_id()} - PU:{prix.get_prixUnitaire()} - PW:{prix.get_prixWeekend()}"
             values.append(label)
-            self.panneaux_map[label] = panneau
+            self.prix_map[label] = prix
 
-        self.panneau_combo["values"] = values
+        self.prix_combo["values"] = values
         if values:
-            self.panneau_combo.current(0)
-            self._fill_panneau_fields(values[0])
+            self.prix_combo.current(0)
+            self._fill_prix_fields(values[0])
 
-    def _fill_panneau_fields(self, label):
-        panneau = self.panneaux_map.get(label)
-        if panneau is None:
+    def _fill_prix_fields(self, label):
+        prix = self.prix_map.get(label)
+        if prix is None:
             return
 
         self.prix_journaliere_entry.delete(0, tk.END)
-        self.prix_journaliere_entry.insert(0, str(panneau.get_prixUnitaire() or ""))
+        self.prix_journaliere_entry.insert(0, str(prix.get_prixUnitaire() or ""))
 
         self.prix_weekend_entry.delete(0, tk.END)
-        self.prix_weekend_entry.insert(0, str(panneau.get_prixWeekend() or ""))
+        self.prix_weekend_entry.insert(0, str(prix.get_prixWeekend() or ""))
 
         self.energie_unitaire_entry.delete(0, tk.END)
-        self.energie_unitaire_entry.insert(0, str(panneau.get_energie() or ""))
+        self.energie_unitaire_entry.insert(0, str(prix.get_EnergieSolaire() or ""))
 
-    def on_panneau_selected(self, _event):
-        self._fill_panneau_fields(self.panneau_combo.get().strip())
+    def on_prix_selected(self, _event):
+        self._fill_prix_fields(self.prix_combo.get().strip())
 
     def _clear_trees(self):
         for tree in (self.tree_journee, self.tree_soiree):
