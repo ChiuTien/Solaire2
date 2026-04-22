@@ -8,6 +8,7 @@ class Panneau:
 		puissanceB=None,
 		energie=None,
 		prixUnitaire=None,
+		prixWeekend=None,
 	):
 		self._idPanneau = idPanneau
 		self._nom = nom
@@ -16,6 +17,7 @@ class Panneau:
 		self._puissanceB = puissanceB
 		self._energie = energie
 		self._prixUnitaire = prixUnitaire
+		self._prixWeekend = prixWeekend
 
 	def get_idPanneau(self):
 		return self._idPanneau
@@ -58,3 +60,9 @@ class Panneau:
 
 	def set_prixUnitaire(self, prixUnitaire):
 		self._prixUnitaire = prixUnitaire
+
+	def get_prixWeekend(self):
+		return self._prixWeekend
+
+	def set_prixWeekend(self, prixWeekend):
+		self._prixWeekend = prixWeekend

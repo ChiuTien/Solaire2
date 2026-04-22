@@ -1,6 +1,12 @@
 USE Solaire;
 GO
 
+IF COL_LENGTH('panneau', 'prixWeekend') IS NULL
+BEGIN
+	ALTER TABLE panneau ADD prixWeekend FLOAT NULL;
+END
+GO
+
 -- Appareil de reference (idAppareil = 1)
 INSERT INTO appareil (nom) VALUES
 ('TV'),
@@ -35,8 +41,8 @@ INSERT INTO batterie (nom, rendement, capacite, chargeDebut, chargeFin) VALUES
 GO
 
 -- 1 panneau
-INSERT INTO panneau (nom, rendement, puissanceA, puissanceB, energie, prixUnitaire) VALUES
-('Panneau 450W', 0.92, 450, 0, 4.5, 850000);
+INSERT INTO panneau (nom, rendement, puissanceA, puissanceB, energie, prixUnitaire, prixWeekend) VALUES
+('Panneau 450W', 0.92, 450, 0, 4.5, 850000, NULL);
 GO
 
 
